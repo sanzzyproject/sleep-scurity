@@ -19,7 +19,6 @@ let stream = null;
 let isCameraEnabled = false;
 let isCapturing = false;
 let captureInterval = null;
-
 // --- 0. Dock Navigation Logic ---
 dockBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -27,18 +26,15 @@ dockBtns.forEach(btn => {
         dockBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Update Tabs
+        // Update Tabs (Fix Kamera Membeku)
         const targetId = btn.getAttribute('data-target');
         tabContents.forEach(tab => {
             tab.classList.remove('active');
-            setTimeout(() => {
-                if(tab.id !== targetId) tab.classList.add('hidden');
-            }, 50); // small delay for animation
+            tab.classList.remove('hidden'); // Pastikan hidden (display:none) terhapus
         });
         
         const activeTab = document.getElementById(targetId);
-        activeTab.classList.remove('hidden');
-        setTimeout(() => activeTab.classList.add('active'), 50);
+        activeTab.classList.add('active');
 
         // Load gallery if gallery tab clicked
         if(targetId === 'tab-gallery') loadGallery();
