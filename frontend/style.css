@@ -1,0 +1,158 @@
+:root {
+    --primary: #0056b3;
+    --primary-hover: #004494;
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-main: #333333;
+    --text-muted: #666666;
+    --success: #28a745;
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+h1 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.status {
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+    background: #e2e3e5;
+}
+
+.status.active {
+    background: #d4edda;
+    color: var(--success);
+}
+
+main {
+    width: 100%;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.card {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: opacity 0.3s ease;
+}
+
+.card p {
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.1s ease;
+    width: 100%;
+    max-width: 300px;
+}
+
+.btn.primary {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn.primary:active {
+    background-color: var(--primary-hover);
+    transform: scale(0.98);
+}
+
+.video-container {
+    width: 100%;
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 1rem;
+    background: #000;
+}
+
+video {
+    width: 100%;
+    display: block;
+}
+
+.instruction {
+    font-size: 0.85rem !important;
+    color: var(--primary) !important;
+    font-weight: 500;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.photo-card {
+    background: var(--bg-color);
+    border-radius: var(--radius);
+    overflow: hidden;
+    padding-bottom: 1rem;
+}
+
+.photo-card img {
+    width: 100%;
+    display: block;
+}
+
+.photo-info {
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.download-btn {
+    display: block;
+    margin: 0.5rem auto 0;
+    padding: 8px 16px;
+    background: var(--primary);
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    width: max-content;
+}
