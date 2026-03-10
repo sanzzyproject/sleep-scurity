@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Security Camera</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Security Mode</h1>
+        <p id="status-text" class="status standby">Standby Mode</p>
+    </header>
+
+    <main>
+        <section id="permission-card" class="card">
+            <h2>Security Setup</h2>
+            <p>This security tool requires camera permission to detect and capture photos if someone interacts with your phone.</p>
+            <p>All photos are stored <strong>locally</strong> inside your browser storage using IndexedDB.</p>
+            <p>Your images are private and <strong>never uploaded</strong> to any server.</p>
+            <button id="enable-btn" class="btn primary">Enable Security Camera</button>
+        </section>
+
+        <section id="camera-section" class="card hidden">
+            <div class="video-container">
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas" class="hidden"></canvas>
+            </div>
+            <p class="instruction">System active. Touch anywhere on the screen to trigger the security capture.</p>
+        </section>
+
+        <section id="gallery-section" class="card">
+            <h2>Captured Evidence</h2>
+            <div id="gallery-grid" class="gallery-grid">
+                </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
