@@ -1,40 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Security Camera</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SANN404 Security</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
+    <header class="glass-header">
         <h1>Security Mode</h1>
-        <p id="status-text" class="status standby">Standby Mode</p>
+        <div id="status-badge" class="badge standby">Standby</div>
     </header>
 
-    <main>
-        <section id="permission-card" class="card">
-            <h2>Security Setup</h2>
-            <p>This security tool requires camera permission to detect and capture photos if someone interacts with your phone.</p>
-            <p>All photos are stored <strong>locally</strong> inside your browser storage using IndexedDB.</p>
-            <p>Your images are private and <strong>never uploaded</strong> to any server.</p>
-            <button id="enable-btn" class="btn primary">Enable Security Camera</button>
-        </section>
-
-        <section id="camera-section" class="card hidden">
-            <div class="video-container">
-                <video id="video" autoplay playsinline muted></video>
-                <canvas id="canvas" class="hidden"></canvas>
+    <main id="main-content">
+        <section id="tab-camera" class="tab-content active">
+            <div id="permission-card" class="card glass-card">
+                <h2>Aktivasi Keamanan</h2>
+                <p>Sistem ini membutuhkan akses kamera untuk mendeteksi interaksi sentuhan. Data sepenuhnya aman.</p>
+                <button id="enable-btn" class="btn primary">Aktifkan Kamera</button>
             </div>
-            <p class="instruction">System active. Touch anywhere on the screen to trigger the security capture.</p>
+
+            <div id="camera-section" class="card glass-card hidden">
+                <div class="video-container">
+                    <video id="video" autoplay playsinline muted></video>
+                    <canvas id="canvas" class="hidden"></canvas>
+                </div>
+                <p id="instruction-text" class="instruction">Sentuh layar di mana saja untuk memulai mode keamanan.</p>
+                <button id="stop-btn" class="btn danger hidden">Hentikan Pemotretan</button>
+            </div>
         </section>
 
-        <section id="gallery-section" class="card">
-            <h2>Captured Evidence</h2>
-            <div id="gallery-grid" class="gallery-grid">
-                </div>
+        <section id="tab-gallery" class="tab-content hidden">
+            <div class="card glass-card">
+                <h2>Galeri Bukti</h2>
+                <div id="gallery-grid" class="gallery-grid">
+                    </div>
+            </div>
+        </section>
+
+        <section id="tab-docs" class="tab-content hidden">
+            <div class="card glass-card docs-card">
+                <h2>🛡️ Informasi Keamanan</h2>
+                <p><strong>Privasi Terjamin:</strong> Web aplikasi ini dirancang dengan arsitektur <em>Zero-Knowledge</em> ke server. Semua pemrosesan gambar dilakukan secara lokal di perangkat Anda.</p>
+                <p><strong>Penyimpanan Lokal (IndexedDB):</strong> Foto yang ditangkap disimpan di dalam memori internal browser Anda. Tidak ada satu byte pun gambar yang dikirim ke internet atau server Vercel kami.</p>
+                <p><strong>Cara Kerja Latar Belakang:</strong> Sistem akan terus mencoba mengambil gambar setiap 5 detik setelah dipicu oleh sentuhan. <em>Catatan: Sistem operasi (iOS/Android) mungkin menangguhkan akses kamera jika layar dimatikan untuk perlindungan baterai dan privasi OS bawaan.</em></p>
+            </div>
         </section>
     </main>
+
+    <nav class="bottom-dock glass-dock">
+        <button class="dock-btn active" data-target="tab-camera">📸<br><span>Kamera</span></button>
+        <button class="dock-btn" data-target="tab-gallery">🖼️<br><span>Galeri</span></button>
+        <button class="dock-btn" data-target="tab-docs">🛡️<br><span>Info</span></button>
+    </nav>
 
     <script src="script.js"></script>
 </body>
