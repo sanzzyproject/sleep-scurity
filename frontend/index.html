@@ -5,53 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SANN404 Security</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header class="glass-header">
-        <h1>Security Mode</h1>
-        <div id="status-badge" class="badge standby">Standby</div>
+    <header class="modern-header">
+        <div class="header-content">
+            <div class="brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <h1>Security Mode</h1>
+            </div>
+            <div id="status-badge" class="badge standby">
+                <span class="pulse-dot"></span> Standby
+            </div>
+        </div>
     </header>
 
     <main id="main-content">
         <section id="tab-camera" class="tab-content active">
-            <div id="permission-card" class="card glass-card">
+            <div id="permission-card" class="card modern-card">
+                <div class="card-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+                </div>
                 <h2>Aktivasi Keamanan</h2>
-                <p>Sistem ini membutuhkan akses kamera untuk mendeteksi interaksi sentuhan. Data sepenuhnya aman.</p>
-                <button id="enable-btn" class="btn primary">Aktifkan Kamera</button>
+                <p>Sistem ini membutuhkan akses periferal kamera untuk mendeteksi interaksi sentuhan biometrik. Data diproses secara lokal.</p>
+                <button id="enable-btn" class="btn primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    Aktifkan Kamera
+                </button>
             </div>
 
-            <div id="camera-section" class="card glass-card hidden">
+            <div id="camera-section" class="card modern-card hidden">
                 <div class="video-container">
                     <video id="video" autoplay playsinline muted></video>
                     <canvas id="canvas" class="hidden"></canvas>
+                    <div class="scanner-line"></div>
                 </div>
-                <p id="instruction-text" class="instruction">Sentuh layar di mana saja untuk memulai mode keamanan.</p>
-                <button id="stop-btn" class="btn danger hidden">Hentikan Pemotretan</button>
+                <div class="instruction-box">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2"><path d="M15.536 8.464a5 5 0 0 1 0 7.072M18.364 5.636a9 9 0 0 1 0 12.728M21.192 2.808a13 13 0 0 1 0 18.384M11 12h-1M6 12H3"></path></svg>
+                    <p id="instruction-text" class="instruction">Sentuh layar di area mana saja untuk memicu mode pelacakan keamanan.</p>
+                </div>
+                <button id="stop-btn" class="btn danger hidden">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="9" x2="15" y2="15"></line><line x1="15" y1="9" x2="9" y2="15"></line></svg>
+                    Hentikan Pemotretan
+                </button>
             </div>
         </section>
 
         <section id="tab-gallery" class="tab-content hidden">
-            <div class="card glass-card">
-                <h2>Galeri Bukti</h2>
-                <div id="gallery-grid" class="gallery-grid">
-                    </div>
+            <div class="header-section">
+                <h2>Log Bukti Forensik</h2>
+                <p class="subtitle">Rekaman ditangkap secara otomatis berdasarkan pemicu sentuhan.</p>
             </div>
+            <div id="gallery-grid" class="gallery-grid">
+                </div>
         </section>
 
         <section id="tab-docs" class="tab-content hidden">
-            <div class="card glass-card docs-card">
-                <h2>🛡️ Informasi Keamanan</h2>
-                <p><strong>Privasi Terjamin:</strong> Web aplikasi ini dirancang dengan arsitektur <em>Zero-Knowledge</em> ke server. Semua pemrosesan gambar dilakukan secara lokal di perangkat Anda.</p>
-                <p><strong>Penyimpanan Lokal (IndexedDB):</strong> Foto yang ditangkap disimpan di dalam memori internal browser Anda. Tidak ada satu byte pun gambar yang dikirim ke internet atau server Vercel kami.</p>
-                <p><strong>Cara Kerja Latar Belakang:</strong> Sistem akan terus mencoba mengambil gambar setiap 5 detik setelah dipicu oleh sentuhan. <em>Catatan: Sistem operasi (iOS/Android) mungkin menangguhkan akses kamera jika layar dimatikan untuk perlindungan baterai dan privasi OS bawaan.</em></p>
+            
+            <div class="dev-profile-card">
+                <div class="dev-banner"></div>
+                <div class="dev-avatar-wrapper">
+                    <img src="https://ui-avatars.com/api/?name=SANN404&background=2563EB&color=fff&size=200&bold=true" alt="SANN404 FORUM" class="dev-avatar">
+                </div>
+                <div class="dev-info">
+                    <h3>SANN404 FORUM <svg class="verified-badge" width="16" height="16" viewBox="0 0 24 24" fill="var(--primary-blue)"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm-1.9 14.7L6 12.6l1.5-1.5 2.6 2.6 6.4-6.4 1.5 1.5-7.9 7.9z"></path></svg></h3>
+                    <p class="dev-role">Full Stack Developer & Security Enthusiast</p>
+                    <p class="dev-bio">Mengembangkan solusi aplikasi web modern, arsitektur keamanan, dan produk digital premium (SaaS/UI). Berdedikasi tinggi terhadap efisiensi kode dan pengalaman pengguna.</p>
+                    
+                    <a href="#" class="btn primary btn-join">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path></svg>
+                        Join Saluran Developer
+                    </a>
+                </div>
+            </div>
+
+            <div class="card modern-card docs-card">
+                <div class="docs-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <h2>Infrastruktur Sistem</h2>
+                </div>
+                
+                <div class="doc-item">
+                    <h4><span class="dot blue"></span> Arsitektur Zero-Knowledge</h4>
+                    <p>Web aplikasi ini berjalan sepenuhnya di sisi klien (Client-Side Processing). Sistem kami tidak mengirimkan satu byte pun data visual ke server eksternal, memastikan privasi absolut.</p>
+                </div>
+                <div class="doc-item">
+                    <h4><span class="dot blue"></span> Penyimpanan Terisolasi (IndexedDB)</h4>
+                    <p>Enkapsulasi data tersimpan di dalam memori internal browser perangkat keras Anda. Bukti otentik hanya dapat diakses melalui antarmuka mesin lokal yang Anda gunakan.</p>
+                </div>
+                <div class="doc-item">
+                    <h4><span class="dot blue"></span> Background Execution</h4>
+                    <p>Setelah terpicu oleh anomali sentuhan, mesin akan menginisialisasi <em>loop capture</em> setiap 5 detik. <em>Catatan: Rutinitas OS modern (iOS/Android) dapat menangguhkan proses latar belakang ini jika layar dalam mode Sleep untuk protokol efisiensi daya.</em></p>
+                </div>
             </div>
         </section>
     </main>
 
-    <nav class="bottom-dock glass-dock">
-        <button class="dock-btn active" data-target="tab-camera">📸<br><span>Kamera</span></button>
-        <button class="dock-btn" data-target="tab-gallery">🖼️<br><span>Galeri</span></button>
-        <button class="dock-btn" data-target="tab-docs">🛡️<br><span>Info</span></button>
+    <nav class="modern-dock">
+        <button class="dock-btn active" data-target="tab-camera">
+            <div class="icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+            </div>
+            <span>Kamera</span>
+        </button>
+        <button class="dock-btn" data-target="tab-gallery">
+            <div class="icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            </div>
+            <span>Galeri</span>
+        </button>
+        <button class="dock-btn" data-target="tab-docs">
+            <div class="icon-wrapper">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            </div>
+            <span>Sistem</span>
+        </button>
     </nav>
 
     <script src="script.js"></script>
