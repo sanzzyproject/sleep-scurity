@@ -74,7 +74,10 @@ enableBtn.addEventListener('click', async () => {
         
         permissionCard.classList.add('hidden');
         cameraSection.classList.remove('hidden');
-        statusBadge.innerText = "Kamera Aktif";
+        
+        // UI UPDATE: Tetap pertahankan elemen span untuk animasi pulse
+        statusBadge.innerHTML = '<span class="pulse-dot"></span> Kamera Aktif';
+        statusBadge.className = "badge active";
         
     } catch (err) {
         alert("Akses kamera ditolak. Izinkan kamera di pengaturan browser Anda.");
@@ -82,10 +85,8 @@ enableBtn.addEventListener('click', async () => {
 });
 
 // --- 3. Auto Photo Capture (Touch Activated) ---
-// Memulai pemotretan saat layar disentuh (hanya jika kamera sudah aktif)
 document.addEventListener("touchstart", (e) => {
-    // Jangan trigger jika yang disentuh adalah tombol stop atau dock
-    if (e.target.closest('.btn') || e.target.closest('.bottom-dock')) return;
+    if (e.target.closest('.btn') || e.target.closest('.modern-dock')) return;
 
     if (isCameraEnabled && !isCapturing) {
         startCaptureSequence();
@@ -94,7 +95,7 @@ document.addEventListener("touchstart", (e) => {
 
 function startCaptureSequence() {
     isCapturing = true;
-    statusBadge.innerText = "Mode Security Active";
+    statusBadge.innerHTML = '<span class="pulse-dot"></span> Security Active';
     statusBadge.className = "badge active";
     instructionText.innerText = "Merekam setiap 5 detik...";
     stopBtn.classList.remove('hidden');
@@ -103,14 +104,13 @@ function startCaptureSequence() {
     captureInterval = setInterval(takePhoto, 5000);
 }
 
-// Fitur Baru: Tombol Hentikan Pemotretan
 stopBtn.addEventListener('click', () => {
     if (isCapturing) {
         clearInterval(captureInterval);
         isCapturing = false;
-        statusBadge.innerText = "Kamera Aktif";
+        statusBadge.innerHTML = '<span class="pulse-dot"></span> Kamera Aktif';
         statusBadge.className = "badge standby";
-        instructionText.innerText = "Sentuh layar di mana saja untuk memulai kembali.";
+        instructionText.innerText = "Sentuh layar di area mana saja untuk memicu mode pelacakan.";
         stopBtn.classList.add('hidden');
     }
 });
@@ -121,7 +121,7 @@ function takePhoto() {
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const imageData = canvas.toDataURL('image/jpeg', 0.6); // Kompresi 0.6 agar tidak berat
+    const imageData = canvas.toDataURL('image/jpeg', 0.6);
     savePhotoLocally(imageData);
 }
 
@@ -135,14 +135,13 @@ function savePhotoLocally(imageData) {
         timestamp: new Date().getTime(),
         imageData: imageData
     }).onsuccess = () => {
-        // Jika sedang di tab galeri, update realtime
         if(document.getElementById('tab-gallery').classList.contains('active')) {
             loadGallery(); 
         }
     };
 }
 
-// --- 5. Photo Gallery & Download (Grid 2 Kolom) ---
+// --- 5. Photo Gallery & Download ---
 function loadGallery() {
     if (!db) return;
     const transaction = db.transaction(['photos'], 'readonly');
@@ -154,7 +153,7 @@ function loadGallery() {
         galleryGrid.innerHTML = '';
 
         if(photos.length === 0) {
-            galleryGrid.innerHTML = '<p style="grid-column: span 2; color: var(--text-muted); padding: 20px;">Belum ada foto yang direkam.</p>';
+            galleryGrid.innerHTML = '<div style="grid-column: span 2; text-align: center; padding: 40px 20px; color: var(--text-muted); background: var(--surface); border-radius: var(--radius-md); border: 1px dashed var(--border-color);"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 10px; opacity: 0.5;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg><br>Belum ada data bukti forensik yang terekam.</div>';
             return;
         }
 
@@ -164,16 +163,22 @@ function loadGallery() {
             
             const card = document.createElement('div');
             card.className = 'photo-card';
+            
+            // UI UPDATE ONLY: Menghapus emoji, menggunakan struktur class modern & ikon SVG. Logika download tetap murni asli.
             card.innerHTML = `
                 <img src="${photo.imageData}" alt="Evidence">
-                <div class="photo-info">${timeStr}</div>
-                <a href="${photo.imageData}" download="SANN404_${photo.timestamp}.jpg" class="download-btn">⬇ Unduh</a>
+                <div class="photo-meta">
+                    <span class="photo-time">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        ${timeStr}
+                    </span>
+                </div>
+                <a href="${photo.imageData}" download="SANN404_${photo.timestamp}.jpg" class="download-btn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> 
+                    Unduh
+                </a>
             `;
             galleryGrid.appendChild(card);
         });
     };
 }
-
-// Catatan: Fungsi `visibilitychange` yang mematikan kamera saat keluar web sudah dihapus sesuai permintaan.
-// Namun, perhatikan bahwa Chrome/Safari di HP secara bawaan sistem akan tetap "menjeda" akses hardware kamera 
-// jika browser diminimize atau layar dikunci.
