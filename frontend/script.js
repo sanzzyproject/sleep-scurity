@@ -2,10 +2,16 @@
 const permissionCard = document.getElementById('permission-card');
 const cameraSection = document.getElementById('camera-section');
 const enableBtn = document.getElementById('enable-btn');
+const stopBtn = document.getElementById('stop-btn');
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
-const statusText = document.getElementById('status-text');
+const statusBadge = document.getElementById('status-badge');
+const instructionText = document.getElementById('instruction-text');
 const galleryGrid = document.getElementById('gallery-grid');
+
+// Dock Navigation Elements
+const dockBtns = document.querySelectorAll('.dock-btn');
+const tabContents = document.querySelectorAll('.tab-content');
 
 // State Variables
 let db;
@@ -14,10 +20,34 @@ let isCameraEnabled = false;
 let isCapturing = false;
 let captureInterval = null;
 
-// --- 1. IndexedDB Initialization ---
+// --- 0. Dock Navigation Logic ---
+dockBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Update Buttons
+        dockBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
 
+        // Update Tabs
+        const targetId = btn.getAttribute('data-target');
+        tabContents.forEach(tab => {
+            tab.classList.remove('active');
+            setTimeout(() => {
+                if(tab.id !== targetId) tab.classList.add('hidden');
+            }, 50); // small delay for animation
+        });
+        
+        const activeTab = document.getElementById(targetId);
+        activeTab.classList.remove('hidden');
+        setTimeout(() => activeTab.classList.add('active'), 50);
+
+        // Load gallery if gallery tab clicked
+        if(targetId === 'tab-gallery') loadGallery();
+    });
+});
+
+// --- 1. IndexedDB Initialization ---
 const initDB = () => {
-    const request = indexedDB.open('hp_security_camera', 1);
+    const request = indexedDB.open('sann404_security', 1);
 
     request.onupgradeneeded = (event) => {
         db = event.target.result;
@@ -26,94 +56,95 @@ const initDB = () => {
         }
     };
 
-    request.onsuccess = (event) => {
-        db = event.target.result;
-        loadGallery(); // Load existing photos on startup
-    };
-
-    request.onerror = (event) => {
-        console.error("IndexedDB error:", event.target.error);
-    };
+    request.onsuccess = (event) => { db = event.target.result; loadGallery(); };
+    request.onerror = (event) => { console.error("IndexedDB error:", event.target.error); };
 };
-
 initDB();
 
 // --- 2. Camera System ---
 enableBtn.addEventListener('click', async () => {
     try {
         stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: "user" }, // Front camera
+            video: { facingMode: "user" },
             audio: false 
         });
         
         video.srcObject = stream;
         isCameraEnabled = true;
         
-        // Update UI
         permissionCard.classList.add('hidden');
         cameraSection.classList.remove('hidden');
-        statusText.innerText = "System Armed - Waiting for touch";
+        statusBadge.innerText = "Kamera Aktif";
         
     } catch (err) {
-        alert("Camera permission denied or camera not found.");
-        console.error(err);
+        alert("Akses kamera ditolak. Izinkan kamera di pengaturan browser Anda.");
     }
 });
 
 // --- 3. Auto Photo Capture (Touch Activated) ---
-document.addEventListener("touchstart", () => {
+// Memulai pemotretan saat layar disentuh (hanya jika kamera sudah aktif)
+document.addEventListener("touchstart", (e) => {
+    // Jangan trigger jika yang disentuh adalah tombol stop atau dock
+    if (e.target.closest('.btn') || e.target.closest('.bottom-dock')) return;
+
     if (isCameraEnabled && !isCapturing) {
         startCaptureSequence();
     }
-}, { passive: true }); // passive flag for better scrolling performance
+}, { passive: true });
 
 function startCaptureSequence() {
     isCapturing = true;
-    statusText.innerText = "Security Triggered - Capturing...";
-    statusText.classList.add('active');
+    statusBadge.innerText = "Mode Security Active";
+    statusBadge.className = "badge active";
+    instructionText.innerText = "Merekam setiap 5 detik...";
+    stopBtn.classList.remove('hidden');
     
-    // Capture immediately, then every 5 seconds
     takePhoto(); 
     captureInterval = setInterval(takePhoto, 5000);
 }
 
+// Fitur Baru: Tombol Hentikan Pemotretan
+stopBtn.addEventListener('click', () => {
+    if (isCapturing) {
+        clearInterval(captureInterval);
+        isCapturing = false;
+        statusBadge.innerText = "Kamera Aktif";
+        statusBadge.className = "badge standby";
+        instructionText.innerText = "Sentuh layar di mana saja untuk memulai kembali.";
+        stopBtn.classList.add('hidden');
+    }
+});
+
 function takePhoto() {
     if (!stream) return;
-
-    // Draw video frame to canvas
     const context = canvas.getContext('2d');
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Convert to image blob/base64
-    const imageData = canvas.toDataURL('image/jpeg', 0.8);
+    const imageData = canvas.toDataURL('image/jpeg', 0.6); // Kompresi 0.6 agar tidak berat
     savePhotoLocally(imageData);
 }
 
 // --- 4. Local Storage (IndexedDB saving) ---
 function savePhotoLocally(imageData) {
     if (!db) return;
-
     const transaction = db.transaction(['photos'], 'readwrite');
     const store = transaction.objectStore('photos');
     
-    const photoRecord = {
-        timestamp: new Date().toISOString(),
+    store.add({
+        timestamp: new Date().getTime(),
         imageData: imageData
-    };
-
-    const request = store.add(photoRecord);
-    
-    request.onsuccess = () => {
-        loadGallery(); // Update gallery view immediately
+    }).onsuccess = () => {
+        // Jika sedang di tab galeri, update realtime
+        if(document.getElementById('tab-gallery').classList.contains('active')) {
+            loadGallery(); 
+        }
     };
 }
 
-// --- 5. Photo Gallery & Download ---
+// --- 5. Photo Gallery & Download (Grid 2 Kolom) ---
 function loadGallery() {
     if (!db) return;
-
     const transaction = db.transaction(['photos'], 'readonly');
     const store = transaction.objectStore('photos');
     const request = store.getAll();
@@ -122,36 +153,27 @@ function loadGallery() {
         const photos = request.result;
         galleryGrid.innerHTML = '';
 
-        // Display newest first
+        if(photos.length === 0) {
+            galleryGrid.innerHTML = '<p style="grid-column: span 2; color: var(--text-muted); padding: 20px;">Belum ada foto yang direkam.</p>';
+            return;
+        }
+
         photos.reverse().forEach(photo => {
-            const dateStr = new Date(photo.timestamp).toLocaleString();
+            const dateObj = new Date(photo.timestamp);
+            const timeStr = `${dateObj.getHours()}:${String(dateObj.getMinutes()).padStart(2, '0')}:${String(dateObj.getSeconds()).padStart(2, '0')}`;
             
             const card = document.createElement('div');
             card.className = 'photo-card';
-            
             card.innerHTML = `
-                <img src="${photo.imageData}" alt="Security Capture">
-                <div class="photo-info">${dateStr}</div>
-                <a href="${photo.imageData}" download="Security_Capture_${photo.timestamp}.jpg" class="download-btn">Download Image</a>
+                <img src="${photo.imageData}" alt="Evidence">
+                <div class="photo-info">${timeStr}</div>
+                <a href="${photo.imageData}" download="SANN404_${photo.timestamp}.jpg" class="download-btn">⬇ Unduh</a>
             `;
-            
             galleryGrid.appendChild(card);
         });
     };
 }
 
-// --- 6. Auto Stop Camera (Page Visibility) ---
-document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === 'hidden') {
-        stopCaptureSequence();
-    }
-});
-
-function stopCaptureSequence() {
-    if (isCapturing) {
-        clearInterval(captureInterval);
-        isCapturing = false;
-        statusText.innerText = "System Armed - Waiting for touch";
-        statusText.classList.remove('active');
-    }
-}
+// Catatan: Fungsi `visibilitychange` yang mematikan kamera saat keluar web sudah dihapus sesuai permintaan.
+// Namun, perhatikan bahwa Chrome/Safari di HP secara bawaan sistem akan tetap "menjeda" akses hardware kamera 
+// jika browser diminimize atau layar dikunci.
