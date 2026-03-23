@@ -1,1 +1,1 @@
-# sleep-scurity
+# NOTE GUNAKAN DENGAN BIJAK JIKA MAU KEMBANGIN!!!
